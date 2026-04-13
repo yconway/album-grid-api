@@ -1,24 +1,27 @@
 {
-  "name": "album-grid-api",
-  "version": "0.1.0",
-  "private": true,
-  "scripts": {
-    "build": "tsc",
-    "typecheck": "tsc --noEmit",
-    "format": "prettier --write .",
-    "lint": "eslint .",
-    "test": "vitest run",
-    "test:watch": "vitest"
-  },
-  "devDependencies": {
-    "@eslint/js": "^10.0.1",
-    "@types/aws-lambda": "^8.10.145",
-    "@types/node": "^20.0.0",
-    "eslint": "^10.1.0",
-    "eslint-config-prettier": "^10.1.8",
-    "prettier": "^3.0.0",
-    "typescript": "^5.0.0",
-    "typescript-eslint": "^8.58.0",
-    "vitest": "^4.1.2"
-  }
+	"name": "album-grid-api",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"build": "tsc",
+		"typecheck": "tsc --noEmit",
+		"format": "prettier --write .",
+		"lint": "eslint .",
+		"test": "vitest run",
+		"test:watch": "vitest",
+		"sam:validate": "sam validate --lint",
+		"sam:build": "yarn build && sam build",
+		"deploy": "yarn sam:build && sam deploy"
+	},
+	"devDependencies": {
+		"@eslint/js": "^10.0.1",
+		"@types/aws-lambda": "^8.10.145",
+		"@types/node": "^20.0.0",
+		"eslint": "^10.1.0",
+		"eslint-config-prettier": "^10.1.8",
+		"prettier": "^3.0.0",
+		"typescript": "^5.0.0",
+		"typescript-eslint": "^8.58.0",
+		"vitest": "^4.1.2"
+	}
 }

@@ -1,35 +1,36 @@
 {
-  "compilerOptions": {
-    // project options
-    "lib": ["ESNext"],
-    "outDir": "./dist",
-    "removeComments": true,
-    "target": "ES2022",
+	"compilerOptions": {
+		// project options
+		"lib": ["ESNext"],
+		"outDir": "./dist",
+		"rootDir": "./src",
+		"removeComments": true,
+		"target": "ES2022",
 
-    // module resolution
-    "module": "CommonJS",
-    "baseUrl": "./src",
-    "esModuleInterop": true,
-    "moduleResolution": "node",
-    "paths": {},
+		// module resolution
+		"module": "CommonJS",
+		"baseUrl": "./src",
+		"esModuleInterop": true,
+		"moduleResolution": "node",
+		"paths": {},
 
-    // source map
-    "sourceMap": true,
-    "sourceRoot": "./src",
+		// source map
+		"sourceMap": true,
+		"sourceRoot": "./src",
 
-    // strict checks
-    "strict": true, // covers alwaysStrict, noImplicitAny, strictNullChecks, and more
-    "skipLibCheck": true,
-    "isolatedModules": true,
-    "allowUnreachableCode": false,
+		// strict checks
+		"strict": true, // covers alwaysStrict, noImplicitAny, strictNullChecks, and more
+		"skipLibCheck": true,
+		"isolatedModules": true,
+		"allowUnreachableCode": false,
 
-    // linter checks
-    "noImplicitReturns": true,
-    "noUncheckedIndexedAccess": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true
-  },
+		// linter checks
+		"noImplicitReturns": true,
+		"noUncheckedIndexedAccess": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true
+	},
 
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules/**/*"]
+	"include": ["src/**/*.ts"],
+	"exclude": ["node_modules/**/*"]
 }

@@ -1,4 +1,14 @@
 node_modules/
 dist/
+.aws-sam/
 .env
 .env.local
+package-lock.json
+
+.claude_root
+.claude/*
+
+tasks/*
+AGENT.md
+documentation/*
+!documentation/FRAMEWORK.md
