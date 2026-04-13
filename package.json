@@ -4,7 +4,7 @@
 	"private": true,
 	"scripts": {
 		"build": "tsc",
-		"typecheck": "tsc --noEmit",
+		"typecheck": "tsc --noEmit -p tsconfig.test.json",
 		"format": "prettier --write .",
 		"lint": "eslint .",
 		"test": "vitest run",

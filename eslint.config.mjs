@@ -6,11 +6,11 @@ import prettierConfig from "eslint-config-prettier"
 export default defineConfig(
 	eslint.configs.recommended,
 	{
-		files: ["src/**/*.ts"],
+		files: ["src/**/*.ts", "test/**/*.ts"],
 		extends: tseslint.configs.recommendedTypeChecked,
 		languageOptions: {
 			parserOptions: {
-				project: true,
+				project: "./tsconfig.test.json",
 				tsconfigRootDir: import.meta.dirname,
 			},
 		},
