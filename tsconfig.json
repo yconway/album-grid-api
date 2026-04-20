@@ -11,7 +11,7 @@
 		"module": "CommonJS",
 		"baseUrl": "./src",
 		"esModuleInterop": true,
-		"moduleResolution": "node",
+		"moduleResolution": "node10",
 		"paths": {},
 
 		// source map

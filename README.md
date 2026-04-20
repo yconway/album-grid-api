@@ -1,72 +1,29 @@
 # album-grid-api
 
-TypeScript AWS Lambda API for Album Grid. Architectural decisions live in [documentation/FRAMEWORK.md](documentation/FRAMEWORK.md) — read that before making structural changes.
+Backend API for **Album Grid** — a web app where users curate grids of album artwork. Search MusicBrainz/Last.fm for albums, arrange them into a personal grid, and get recommendations based on aggregate user behavior.
 
-## Prerequisites
+## Tech stack
 
-- Node 24 (`nvm use`)
-- Yarn
-- [AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html) with credentials configured (`aws configure`)
-- [AWS SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html)
+- **TypeScript 5** on **Node.js 24**, compiled to CommonJS (`tsc`, no bundler).
+- **AWS Lambda** per endpoint, fronted by **API Gateway v2** (HTTP API). No HTTP framework — each handler is a standalone Lambda function.
+- **DynamoDB** for user grids and precomputed recommendations. **S3** for user-uploaded cover art.
+- **Cognito + Google OAuth** for auth; API Gateway's native JWT authorizer validates tokens.
+- **AWS SAM** for infrastructure-as-code; nothing is configured by hand in the console.
+- **GitHub Actions** deploys on push to `master` via OIDC (no long-lived AWS keys).
 
-## Setup
+## Orientation
+
+- **[FRAMEWORK.md](documentation/FRAMEWORK.md)** — architectural decisions and the reasoning behind them. Start here if you're trying to understand _why_ the project looks the way it does.
+- **[PROJECT_STRUCTURE.md](documentation/PROJECT_STRUCTURE.md)** — folder layout, naming conventions, model/handler patterns. Start here if you're trying to figure out _where_ code goes.
+- **[DEVELOPMENT.md](documentation/DEVELOPMENT.md)** — prerequisites, setup, commands, testing approach.
+- **[DEPLOYMENT.md](documentation/DEPLOYMENT.md)** — how deploys work, manual deploy, rollback, one-time OIDC bootstrap.
+
+## Quick start
 
 ```bash
 nvm use
 yarn
+yarn typecheck && yarn test
 ```
 
-## Development
-
-```bash
-yarn typecheck      # type-check src/
-yarn test           # run vitest
-yarn lint           # eslint
-yarn format         # prettier --write
-```
-
-## Deploy
-
-Automated deploys run on push to `master` via GitHub Actions (see [`.github/workflows/deploy.yml`](.github/workflows/deploy.yml)). For a manual deploy from your machine:
-
-```bash
-yarn deploy
-```
-
-This runs `tsc` → `sam build` → `sam deploy`. Stack name and region are pinned in [`samconfig.toml`](samconfig.toml) (`album-grid-api`, `us-east-1`).
-
-First deploy prompts for changeset confirmation; subsequent deploys from CI pass `--no-confirm-changeset`.
-
-## Infrastructure
-
-All AWS resources are defined in [`template.yaml`](template.yaml) (AWS SAM). Nothing is clicked in the console. To sanity-check the template:
-
-```bash
-yarn sam:validate
-```
-
-## GitHub Actions OIDC bootstrap
-
-The `deploy` workflow authenticates to AWS via OIDC (no long-lived access keys). A one-time IAM setup is required in the AWS account before the workflow can succeed:
-
-1. Create a GitHub OIDC identity provider in IAM (`token.actions.githubusercontent.com`). AWS only needs one per account.
-2. Create an IAM role (e.g. `GitHubActions-album-grid-api-deploy`) with:
-   - **Trust policy**: the GitHub OIDC provider, conditioned on `repo:<owner>/album-grid-api:ref:refs/heads/master`.
-   - **Permissions**: CloudFormation, Lambda, API Gateway, IAM (for role creation), S3 (for the SAM artifacts bucket), CloudWatch Logs. `AdministratorAccess` works to start; scope down later.
-3. Set a GitHub **repository variable** `AWS_DEPLOY_ROLE_ARN` to the role's ARN.
-
-Once those three steps are done, pushes to `master` deploy automatically.
-
-## Project layout
-
-```
-src/
-  handlers/       # one file per Lambda entry point
-  lib/            # shared modules (future)
-  types/          # shared TypeScript types (future)
-test/             # vitest unit + contract tests
-template.yaml     # SAM infrastructure
-samconfig.toml    # SAM CLI config
-documentation/    # architecture notes (FRAMEWORK.md etc.)
-tasks/            # in-flight tickets (gitignored)
-```
+See [DEVELOPMENT.md](documentation/DEVELOPMENT.md) for the full command list.

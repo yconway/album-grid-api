@@ -20,19 +20,20 @@ Compiled with `tsc` to `dist/`. No bundler — plain CommonJS output is sufficie
 
 ## Project Layout
 
+See [PROJECT_STRUCTURE.md](PROJECT_STRUCTURE.md) for the full folder layout and conventions.
+
+Top-level shape:
+
 ```
 album-grid-api/
-├── src/
-│   ├── handlers/          # one file per Lambda entry point
-│   ├── lib/               # shared modules (MB client, Last.fm client, cache, logging)
-│   └── types/             # shared TypeScript types (API shapes, domain models)
+├── src/                   # handlers, framework, models, domain, integrations
 ├── test/                  # vitest unit + contract tests
 ├── template.yaml          # SAM infrastructure template (single source of truth)
 ├── tasks/                 # in-flight work tickets
-└── documentation/         # this doc + supplementary architecture notes
+└── documentation/         # this doc + PROJECT_STRUCTURE.md + supplementary notes
 ```
 
-Handlers stay thin — business logic lives in `lib/` so it's testable without the Lambda runtime.
+Handlers stay thin — business logic lives in `domain/` and `integrations/` so it's testable without the Lambda runtime.
 
 ---
 
