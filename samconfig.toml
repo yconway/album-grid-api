@@ -1,0 +1,19 @@
+version = 0.1
+
+[default.global.parameters]
+stack_name = "album-grid-api"
+
+[default.build.parameters]
+cached = true
+parallel = true
+
+[default.deploy.parameters]
+stack_name = "album-grid-api"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM"
+resolve_s3 = true
+confirm_changeset = true
+fail_on_empty_changeset = false
+
+[default.validate.parameters]
+lint = true
