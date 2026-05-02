@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest"
 import { runWithContext } from "./context"
-import { logger } from "./logger"
+import { _resetNamespaceCache, logger } from "./logger"
 import type { Namespace } from "./logger.type"
 
 describe("logger", () => {
@@ -9,6 +9,7 @@ describe("logger", () => {
 	const capturedErrors: unknown[] = []
 
 	beforeEach(() => {
+		_resetNamespaceCache()
 		capturedLogs.length = 0
 		capturedWarns.length = 0
 		capturedErrors.length = 0

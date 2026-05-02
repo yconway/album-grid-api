@@ -34,6 +34,20 @@ Resources:
             Path: /health
             Method: GET
 
+  SearchFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub "${AWS::StackName}-search"
+      CodeUri: dist/
+      Handler: handlers/search.handler
+      Events:
+        GetSearch:
+          Type: HttpApi
+          Properties:
+            ApiId: !Ref HttpApi
+            Path: /search
+            Method: GET
+
 Outputs:
   ApiUrl:
     Description: HTTP API base URL

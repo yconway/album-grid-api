@@ -2,6 +2,11 @@ import { getContext } from "./context"
 import type { Logger, Namespace } from "./logger.type"
 
 let namespaceCache = undefined as Namespace[] | undefined
+
+export function _resetNamespaceCache(): void {
+	namespaceCache = undefined
+}
+
 function getNamespaces(): Namespace[] {
 	if (namespaceCache) {
 		return namespaceCache
