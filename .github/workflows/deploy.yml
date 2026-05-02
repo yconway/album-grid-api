@@ -3,6 +3,7 @@ name: Deploy
 on:
   push:
     branches: [master]
+  pull_request:
   workflow_dispatch:
 
 concurrency:
@@ -13,8 +14,11 @@ permissions:
   id-token: write
   contents: read
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
-  deploy:
+  ci:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -37,6 +41,23 @@ jobs:
 
       - name: Test
         run: yarn test
+
+  deploy:
+    needs: ci
+    if: github.event_name == 'push' && github.ref == 'refs/heads/master' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: yarn
+
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
 
       - name: Setup SAM CLI
         uses: aws-actions/setup-sam@v2

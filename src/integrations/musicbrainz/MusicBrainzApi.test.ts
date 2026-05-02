@@ -100,18 +100,17 @@ describe("searchReleaseGroups", () => {
 			)
 
 			const result = await searchReleaseGroups("dark side of the moon")
-			const releaseGroup = result.releaseGroups[0]
+			const releaseGroup = result.releaseGroups[0]!
 
 			expect(releaseGroup.primaryType).toBe("Album")
 			expect(releaseGroup.secondaryTypes).toEqual(["Compilation"])
 			expect(releaseGroup.firstReleaseDate).toBe("1973-03-01")
-			expect(releaseGroup.artistCredits[0].artist.sortName).toBe("Floyd, Pink")
+			expect(releaseGroup.artistCredits[0]!.artist.sortName).toBe("Floyd, Pink")
 		})
 
 		it("maps absent primary-type to null", async () => {
 			// eslint-disable-next-line @typescript-eslint/no-unused-vars
-			const { "primary-type": _, ...groupWithoutType } =
-				buildMbReleaseGroup()
+			const { "primary-type": _, ...groupWithoutType } = buildMbReleaseGroup()
 			stubFetchSuccess(
 				buildMbSearchResponse({
 					"release-groups": [groupWithoutType as MbReleaseGroup],
@@ -119,7 +118,7 @@ describe("searchReleaseGroups", () => {
 			)
 
 			const result = await searchReleaseGroups("test")
-			expect(result.releaseGroups[0].primaryType).toBeNull()
+			expect(result.releaseGroups[0]!.primaryType).toBeNull()
 		})
 
 		it("builds coverArtUrl from release group id", async () => {
@@ -130,7 +129,7 @@ describe("searchReleaseGroups", () => {
 			)
 
 			const result = await searchReleaseGroups("test")
-			expect(result.releaseGroups[0].coverArtUrl).toBe(
+			expect(result.releaseGroups[0]!.coverArtUrl).toBe(
 				"https://coverartarchive.org/release-group/mb-uuid-abc/front",
 			)
 		})
@@ -150,7 +149,7 @@ describe("searchReleaseGroups", () => {
 
 			await searchReleaseGroups("test query")
 
-			const calledUrl = vi.mocked(fetch).mock.calls[0][0] as string
+			const calledUrl = vi.mocked(fetch).mock.calls[0]![0] as string
 			const url = new URL(calledUrl)
 			expect(url.searchParams.get("query")).toBe("test query")
 			expect(url.searchParams.get("limit")).toBe("25")
@@ -162,7 +161,7 @@ describe("searchReleaseGroups", () => {
 
 			await searchReleaseGroups("test", { limit: 10, offset: 5 })
 
-			const calledUrl = vi.mocked(fetch).mock.calls[0][0] as string
+			const calledUrl = vi.mocked(fetch).mock.calls[0]![0] as string
 			const url = new URL(calledUrl)
 			expect(url.searchParams.get("limit")).toBe("10")
 			expect(url.searchParams.get("offset")).toBe("5")
@@ -173,7 +172,7 @@ describe("searchReleaseGroups", () => {
 
 			await searchReleaseGroups("test", { limit: 200 })
 
-			const calledUrl = vi.mocked(fetch).mock.calls[0][0] as string
+			const calledUrl = vi.mocked(fetch).mock.calls[0]![0] as string
 			const url = new URL(calledUrl)
 			expect(url.searchParams.get("limit")).toBe("100")
 		})
