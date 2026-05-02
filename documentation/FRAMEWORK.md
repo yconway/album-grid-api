@@ -181,16 +181,56 @@ Secrets (Last.fm API key, Cognito client secret, etc.) live in SSM Parameter Sto
 
 ## Logging
 
-Structured JSON logs to CloudWatch — one log line per meaningful event, never `console.log` of arbitrary strings. Every log line includes `requestId` (from `event.requestContext.requestId`) so logs for a single request are greppable together.
+Custom wrapper over `console` in `src/framework/logger.ts`. `requestId` is injected automatically from `AsyncLocalStorage` context — callers never pass it explicitly.
 
-Log levels:
+```ts
+import { logger } from "../framework/logger"
 
-- **`error`** — failures (upstream 5xx after retries, unhandled exceptions, assertion violations)
-- **`warn`** — degraded but recovered (upstream 429 that served from cache, cover-art miss)
-- **`info`** — request start/end with timing, significant state transitions
-- **`debug`** — request/response bodies; off by default in prod, toggled per-function via env var
+logger.debug("musicbrainz", "fetching release group", { mbid })
+logger.info("handlers", "search request", { query })
+logger.warn("rate limit hit", { source: "musicbrainz" })
+logger.error(new Error("fetch failed")) // serializes name/message/stack
+logger.error("unexpected state", { gridId }) // plain string also accepted
+```
 
-Library choice (likely `pino`) is decided when writing the first handler — not prescribed here.
+`debug` and `info` require a typed namespace — add values to the union in `src/framework/logger.type.ts` as modules grow. `warn` and `error` always emit regardless of configuration.
+
+### Filtering: `LOG_NAMESPACES`
+
+Controls which namespaces emit. Accepts a comma-separated list or `*` for all.
+
+| Value                    | Effect                                   |
+| ------------------------ | ---------------------------------------- |
+| `""` (empty, default)    | Only `warn` and `error` emit             |
+| `"musicbrainz"`          | `musicbrainz` namespace + `warn`/`error` |
+| `"musicbrainz,handlers"` | Both namespaces + `warn`/`error`         |
+| `"*"`                    | Everything                               |
+
+**Local** — set in `.env` or shell:
+
+```sh
+LOG_NAMESPACES=*
+```
+
+**Deployed (per-Lambda)** — set in `template.yaml`:
+
+```yaml
+Environment:
+  Variables:
+    LOG_NAMESPACES: musicbrainz
+```
+
+## Request Context and AsyncLocalStorage
+
+`requestId` (and eventually `userId`) needs to be present on every log line without threading it through every function call.
+
+This is solved with Node.js's built-in `AsyncLocalStorage` (`src/framework/context.ts`). Here is how it works:
+
+`AsyncLocalStorage` maintains a value scoped to an async execution tree. When you call `storage.run(value, fn)`, every `await` inside `fn` — and every function called from `fn`, no matter how deeply nested — can read that same value via `storage.getStore()`. The value does not leak to other concurrent executions.
+
+In Lambda terms: `wrapHandler` calls `runWithContext({ requestId }, () => handler(event))` at the start of each invocation. For the lifetime of that invocation, any code that calls `getContext()` gets back `{ requestId }` without being passed it explicitly. When the invocation ends, the context goes away. The next invocation gets a fresh context — no warm-start leakage.
+
+The logger reads from `getContext()` automatically on every call. Callers never think about it.
 
 ## Observability
 

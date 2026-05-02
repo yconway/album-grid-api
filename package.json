@@ -9,6 +9,7 @@
 		"lint": "eslint .",
 		"test": "vitest run",
 		"test:watch": "vitest",
+		"test:local": "vitest run --config vitest.localtest.config.ts",
 		"sam:validate": "sam validate --lint",
 		"sam:build": "yarn build && sam build",
 		"deploy": "yarn sam:build && sam deploy"
