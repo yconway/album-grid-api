@@ -12,9 +12,9 @@ function findAlbum(
 	artistFragment: string,
 ): ReleaseGroup | undefined {
 	return results.find(
-		(rg) =>
-			rg.title.toLowerCase().includes(titleFragment.toLowerCase()) &&
-			rg.artistCredits.some((credit) =>
+		(releaseGroup) =>
+			releaseGroup.title.toLowerCase().includes(titleFragment.toLowerCase()) &&
+			releaseGroup.artistCredits.some((credit) =>
 				credit.artist.name.toLowerCase().includes(artistFragment.toLowerCase()),
 			),
 	)
