@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import type { APIGatewayProxyEventV2 } from "aws-lambda"
-import { handler } from "../src/handlers/health"
+import { handler } from "./health"
 
 describe("health handler", () => {
 	it("returns 200 with status ok", async () => {
