@@ -19,6 +19,16 @@ Resources:
     Type: AWS::Serverless::HttpApi
     Properties:
       StageName: $default
+      CorsConfiguration:
+        AllowOrigins:
+          - "http://localhost:5173"
+          - "https://*.yoconway.com"
+        AllowMethods:
+          - GET
+          - OPTIONS
+        AllowHeaders:
+          - Content-Type
+          - Authorization
 
   HealthFunction:
     Type: AWS::Serverless::Function
